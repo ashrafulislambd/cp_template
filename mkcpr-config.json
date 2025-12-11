@@ -1,7 +1,7 @@
 {
-    "code_folder": "/home/circleci/project/CodeFolder",
-    "template_path": "/home/circleci/project/Template.tex",
-    "output_file_path": "/home/circleci/project/Output.tex",
+    "code_folder": "/root/project/CodeFolder",
+    "template_path": "/root/project/Template.tex",
+    "output_file_path": "/root/project/Output.tex",
     "excluded": [
         ".vscode",
         "__pycache__"
