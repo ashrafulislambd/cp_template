@@ -1,0 +1,42 @@
+version: 2.1
+
+jobs:
+  build-notebook:
+    docker:
+      - image: texlive/texlive:latest     # Includes xelatex
+    steps:
+      - checkout
+
+      - run:
+          name: Setup Python venv + install mkcpr
+          command: |
+            apt-get update
+            apt-get install -y python3 python3-venv python3-pip
+            python3 -m venv .venv
+            . .venv/bin/activate
+            pip install --upgrade pip
+            pip install mkcpr
+
+      - run:
+          name: Generate Output.tex using mkcpr
+          command: |
+            . .venv/bin/activate
+            mkcpr       # or your command
+            ls -lah
+
+      - run:
+          name: Compile Output.tex → Output.pdf
+          command: |
+            xelatex Output.tex
+            xelatex Output.tex   # two passes for references
+            ls -lah
+
+      - store_artifacts:
+          path: Output.pdf
+          destination: Output.pdf
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build-notebook
