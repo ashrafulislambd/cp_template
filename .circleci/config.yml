@@ -1,0 +1,39 @@
+version: 2.1
+
+jobs:
+  build-notebook:
+    docker:
+      - image: texlive/texlive:latest   # Full TeX Live image with xelatex preinstalled
+    steps:
+      - checkout
+
+      - run:
+          name: Install mkcpr
+          command: |
+            apt-get update
+            apt-get install -y python3 python3-pip
+            pip install --upgrade pip
+            pip install mkcpr
+
+      - run:
+          name: Generate Output.tex via mkcpr
+          command: |
+            mkcpr
+            echo "Generated Output.tex"
+
+      - run:
+          name: Compile Output.tex -> Output.pdf
+          command: |
+            xelatex Output.tex
+            xelatex Output.tex     # run twice for references
+            ls -lah
+
+      - store_artifacts:
+          path: Output.pdf
+          destination: Output.pdf
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build-notebook
