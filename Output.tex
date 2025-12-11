@@ -1,0 +1,2468 @@
+\documentclass[twoside]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{multicol}
+\usepackage{minted}
+\usepackage{python}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{pdfpages}
+\usepackage{needspace}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{afterpage}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[inline]{enumitem}
+\usepackage{fontspec}
+\usepackage{ulem}
+\usepackage[explicit]{titlesec}
+\usepackage[hidelinks]{hyperref}
+
+\geometry{letterpaper, portrait, left=0.5cm, right=0.5cm, top=1.8cm, bottom=1cm}
+\setminted{
+    style=tango,
+    breaklines=true,
+    breakanywhere=true
+}
+
+\setlength{\headsep}{0.5cm}
+\setlength{\columnsep}{0.5cm}
+\setlength{\columnseprule}{0.01cm}
+\renewcommand{\columnseprulecolor}{\color{gray}}
+
+\pagestyle{fancy}
+\pagenumbering{arabic}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[LO,RE]{\Large\textbf{Sleepy\_Boyz}}
+\fancyhead[LE,RO]{\textsf{\leftmark}}
+\fancyfoot[LE,RO]{\textbf{\textsf{\thepage}}}
+
+\renewcommand{\headrulewidth}{0.01cm}
+\renewcommand{\footrulewidth}{0.01cm}
+
+\setlength{\parindent}{0em}
+\setlength{\tabcolsep}{10pt} % Default value: 6pt
+\renewcommand{\arraystretch}{1.5} % Default value: 1
+
+\setmainfont{Montserrat}
+\setcounter{tocdepth}{5}
+
+\titleformat{\section}{\Huge\bfseries\centering}{\thesection}{1em}{#1}[\vspace{2em}]
+\titleformat{\subsection}{\huge\bfseries\centering}{\thesubsection}{1em}{#1}
+\titleformat{\subsubsection}{\LARGE\bfseries\centering}{\thesubsubsection}{1em}{#1}
+\titleformat{\paragraph}{\Large\bfseries\centering}{\theparagraph}{1em}{#1}
+\titleformat{\subparagraph}{\large\bfseries\centering}{\thesubparagraph}{1em}{#1}
+\titleformat{\mkcprfile}{\normalsize\bfseries}{\themkcprfile}{1em}{\uline{#1}}
+
+\begin{document}
+\begin{multicols*}{2}
+    \tableofcontents
+\end{multicols*}
+\begin{multicols*}{3}
+\needspace{5\baselineskip}
+{
+\titleformat{\section}{\Huge\bfseries\centering}{\thesection}{1em}{#1}[\vspace{2em}]
+\phantomsection
+\section*{Auvro}
+\markboth{AUVRO}{}
+\addcontentsline{toc}{section}{Auvro}
+}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{BIT}
+\addcontentsline{toc}{subsection}{BIT}
+}
+\begin{minted}{cpp}
+//Binary Indexed Tree:
+class BIT{
+private:
+    int n;
+    vector<int> tree;
+    vector<int> input;
+
+public:
+    BIT(int sz){ 
+        tree.assign(sz+1, 0); 
+        input.assign(sz+1, 0); 
+        n = sz; 
+    }
+
+    void insert(int i, int x){
+        input[i] = x;
+        while(i <= n){
+            tree[i] += x;
+            i += i&(-i);
+        }
+    }
+
+    void update(int i, int val){
+        input[i] += val;
+        while(i <= n){
+            tree[i] += val;
+            i += i&(-i);
+        }
+    }
+
+    int get_sum(int i, int j){
+        int sum1 = 0, sum2 = 0;
+        int it1 = i-1, it2 = j;
+
+        //sum from index 1 to i-1
+        while(it1 > 0){
+            sum1 += tree[it1];
+            it1 -= it1&(-it1);
+        }
+
+        //sum from index 1 to j
+        while(it2 > 0){
+            sum2 += tree[it2];
+            it2 -= it2&(-it2);
+        }
+
+        //sum from i to j
+        return (sum2 - sum1);
+    }
+
+    int& operator[] (int i){ return input[i]; }
+};
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{Bitmasking}
+\addcontentsline{toc}{subsection}{Bitmasking}
+}
+\begin{minted}{cpp}
+//Bitmasking:
+int n, x;
+
+//bit representation
+for(int k=31; k>=0; k--){
+    if(n & (1<<k)) cout<<"1";
+    else cout<<"0";
+}
+
+//get kth bit (from 0th bit)    x = n & (1<<k);
+//set bit (to 1)                n = n | (1<<k);
+//reset bit (to 0)              n = n & ~(1<<k);
+//invert bit (0 to 1/ 1 to 0)   n = n ^ (1<<k);
+//set last 1-bit to 0           n = n & (n-1);
+
+//determine highest 2^k such that it divides n
+x = n&(-n);
+
+//check if n is a power of 2
+if((n & (n-1)) == 0) cout<<"Yes\n"
+else cout<<"No\n";
+
+//inverts all bits after the last 1-bit
+n = n | (n-1);
+
+//__builtin functions
+x = 5328; //00000000000000000001010011010000
+cout<<__builtin_clz(x)<<"\n"; //19 (number of 0's at the beginning)
+cout<<__builtin_ctz(x)<<"\n"; //4 (number of 0's at the end)
+cout<<__builtin_popcount(x)<<"\n"; //5 (number of 1's)
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{Intersection}
+\addcontentsline{toc}{subsection}{Intersection}
+}
+\begin{minted}{cpp}
+//Interval Intersection and Union:
+// intersection size
+int intersect(int l1, int r1, int l2, int r2){
+    int low = max(l1, l2);
+    int high = min(r1, r2);
+    return max(0LL, high-low+1);
+}
+
+// intersection range
+pair<int, int> intersect(int l1, int r1, int l2, int r2){
+    int low = max(l1, l2);
+    int high = min(r1, r2);
+
+    if(low > high) 
+        return {-1, -1};
+
+    return {low, high};
+}
+
+// union size
+int unite(int l1, int r1, int l2, int r2){
+    int low = min(l1, l2); 
+    int high = max(r1, r2);
+
+    return high-low+1;
+}
+
+// union range
+pair<int, int> unite(int l1, int r1, int l2, int r2){
+    int low = min(l1, l2); 
+    int high = max(r1, r2);
+
+    return {low, high};
+}
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{Nearest Smaller Element}
+\addcontentsline{toc}{subsection}{Nearest Smaller Element}
+}
+\begin{minted}{cpp}
+//Nearest Smaller Element:
+/*
+    Input: First line: n, q. Second line: n 
+    integers a[]. Next q lines: queries where
+    each query i(0<i<=n) asks to find the 
+    nearest smaller element of a[i] that 
+    both PRECEEDS and PROCEEDS a[i].
+
+    Output: For each i, print the answer in
+    a new line. If no answer exists, print -1.
+
+    Constraints: 0<n<200000, 0<q<100000,
+    0<a[i]<1000000
+
+    Time Limit: 2 seconds
+
+    Memory Limit: 256 MB
+
+    Solution Approach: We process the input array
+    a[] and store the nearest smaller elemnts for
+    each i in another array. So for each query,
+    we can get the answer in O(1) time after O(n)
+    preprocessing.
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+#define int long long
+#define mod 1000000007
+
+void build_pre(int input[], int pre[], int n)
+{
+    deque<int> d;
+
+    for(int i=1; i<=n; i++){
+        int x = input[i];
+        
+        while(1){
+            if(d.size() == 0){
+                pre[i] = -1;
+                d.push_back(x);
+                break;
+            }
+
+            if(d.back() < x){
+                pre[i] = d.back();
+                d.push_back(x);
+                break;
+            }
+            else
+                d.pop_back();
+        }
+    }
+}
+
+void build_post(int input[], int post[], int n)
+{
+    deque<int> d;
+
+    for(int i=n; i>0; i--){
+        int x = input[i];
+        
+        while(1){
+            if(d.size() == 0){
+                post[i] = -1;
+                d.push_back(x);
+                break;
+            }
+
+            if(d.front() < x){
+                post[i] = d.front();
+                d.push_front(x);
+                break;
+            }
+            else
+                d.pop_front();
+        }
+    }
+}
+
+signed main()
+{
+    int n, q;
+    cin>>n>>q;
+
+    int pre[n+1], post[n+1], input[n+1];
+
+    for(int i=1; i<=n; i++)
+        cin>>input[i];
+
+    build_pre(input, pre, n);
+    build_post(input, post, n);
+
+    //queries
+    while(q--){
+        int i;
+        cin>>i;
+        
+        if(pre[i] == -1 || post[i] == -1)
+            cout<<max(pre[i], post[i])<<"\n";
+        else
+            cout<<min(pre[i], post[i])<<"\n";
+    }
+
+    return 0;
+}
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{Sparse Table}
+\addcontentsline{toc}{subsection}{Sparse Table}
+}
+\begin{minted}{cpp}
+//Sparse table:
+class sparse_table{
+private:
+    int n, m;
+    vector<vector<int>> a;
+
+    int logarithm(int a, int b){
+        int r = 0, x = a;
+        while(b >= a){ a *= x; r++; }
+        return r;
+    }
+
+    int operation(int a, int b){
+        //modify only here
+
+        return __gcd(a, b);
+        //return min(a, b);
+        //return max(a, b);
+    }
+
+public:
+    sparse_table(int n){
+        this->n = n;
+        m = logarithm(2, n);
+        a.resize(1);
+    }
+
+    void insert(int x){ a[0].push_back(x); }
+
+    void build(){
+        a.resize(m+1, vector<int>(n, 0));
+
+        for(int i=1; i<=m; i++){
+            for(int j=0; j+(1<<i)-1 < n; j++){
+                int left = a[i-1][j];
+                int right = a[i-1][j + (1<<(i-1))];
+                a[i][j] = operation(left, right);
+            }
+        }
+    }
+
+    // driver code query is 1 indexed
+    int query(int i, int j){
+        i--; j--;
+
+        int x = logarithm(2, j-i+1);
+        int left = a[x][i];
+        int right = a[x][j - (1<<x) + 1];
+        return operation(left, right);
+    }
+};
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{Ternary Search}
+\addcontentsline{toc}{subsection}{Ternary Search}
+}
+\begin{minted}{cpp}
+//Ternary Search:
+int func(int mid, vector<pair<int, int>> v){
+    int back = 0, front = 0;
+ 
+    for(int i=0; i<v.size(); i++){
+        if(front + mid < v[i].first || back - mid > v[i].second)
+            return 0;
+ 
+        front = min(v[i].second, front + mid);
+        back = max(v[i].first, back - mid);
+    }
+ 
+    return 1;
+}
+
+int tsearch(vector<pair<int, int>> v, int mx){
+    int left = 0, right = mx + 5, mid = 0;
+
+    while(right - left > 5){
+        int mid1 = left + (right - left) / 3;
+        int mid2 = right - (right - left) / 3;
+
+        if(func(mid1, v) < func(mid2, v))
+            left = mid1; 
+        else 
+            right = mid2; 
+    }
+
+    
+    for(int i=left; i<=right; ++i){
+        if(i < 0)
+            continue;
+        if(func(i, v) == 1) 
+           return i;
+    }
+
+    return mid;
+}
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{Trie}
+\addcontentsline{toc}{subsection}{Trie}
+}
+\begin{minted}{cpp}
+//Trie:
+typedef struct Node{
+    Node* next[26];
+    bool endmark;
+    Node(){
+        endmark = false;
+        for(int i=0; i<26; i++)
+            next[i] = NULL;
+    }
+} Node;
+
+class Trie{
+private:
+    Node* root;
+
+public:
+    Trie(){ root = new Node(); }
+
+    void insert(string word){
+        Node* node = root;
+        for(int i=0; i < word.size(); i++){
+            if(node->next[word[i] - 'a'] == NULL){
+                node->next[word[i] - 'a'] = new Node();
+            }
+            node = node->next[word[i] - 'a'];
+        }
+        node->endmark = true;
+    }
+
+    bool search(string word) {
+        Node* node = root;
+        for(int i=0; i < word.size(); i++){
+            if(node->next[word[i] - 'a'] == NULL){
+                return false;
+            }
+            node = node->next[word[i] - 'a'];
+        }
+        return node->endmark == true;
+    }
+
+    Node* startsWith(string prefix) {
+        Node* node = root;
+        for(int i=0; i < prefix.size(); i++){
+            if(node->next[prefix[i] - 'a'] == NULL){
+                return NULL;
+            }
+            node = node->next[prefix[i] - 'a'];
+        }
+        return node;
+    }
+
+    void display(Node* curr, string prefix) {
+        if(curr->endmark == true){
+            cout<<prefix<<" ";
+        }
+
+        for(int i=0; i<26; i++){
+            if(curr->next[i] != NULL){
+                char nextChar = i + 'a';
+                display(curr->next[i], prefix+nextChar);
+            }
+        }
+    }
+
+    void displayAll() { display(root, ""); }
+
+    void destroyTrie(Node* curr){
+        for(int i=0; i<26; i++){
+            if(curr->next[i])
+                destroyTrie(curr->next[i]);
+        }
+
+        delete(curr);
+    }
+};
+
+\end{minted}
+
+\needspace{5\baselineskip}
+{
+\titleformat{\section}{\Huge\bfseries\centering}{\thesection}{1em}{#1}[\vspace{2em}]
+\phantomsection
+\section*{Data Structures}
+\markboth{DATA STRUCTURES}{}
+\addcontentsline{toc}{section}{Data Structures}
+}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{unionfindrollback}
+\addcontentsline{toc}{subsection}{unionfindrollback}
+}
+\begin{minted}{cpp}
+
+struct RollbackUF {
+\end{minted}
+\vspace{-12pt}
+\needspace{5\baselineskip}
+\begin{minted}{cpp}
+    vi e; vector<pii> st;
+    RollbackUF(int n) : e(n, -1) {}
+    int size(int x) { return -e[find(x)]; }
+    int find(int x) { return e[x] < 0 ? x : find(e[x]); }
+    int time() { return sz(st); }
+    
+\end{minted}
+\vspace{-12pt}
+\needspace{5\baselineskip}
+\begin{minted}{cpp}
+    void rollback(int t) {
+        for (int i = time(); i --> t;)
+            e[st[i].first] = st[i].second;
+        st.resize(t);
+    }
+
+\end{minted}
+\vspace{-12pt}
+\needspace{9\baselineskip}
+\begin{minted}{cpp}
+    bool join(int a, int b) {
+        a = find(a), b = find(b);
+        if (a == b) return false;
+        if (e[a] > e[b]) swap(a, b);
+        st.push_back({a, e[a]});
+        st.push_back({b, e[b]});
+        e[a] += e[b]; e[b] = a;
+        return true;
+    }
+};
+
+\end{minted}
+
+\needspace{5\baselineskip}
+{
+\titleformat{\section}{\Huge\bfseries\centering}{\thesection}{1em}{#1}[\vspace{2em}]
+\phantomsection
+\section*{Dynamic Programming}
+\markboth{DYNAMIC PROGRAMMING}{}
+\addcontentsline{toc}{section}{Dynamic Programming}
+}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{knapsack}
+\addcontentsline{toc}{subsection}{knapsack}
+}
+\begin{minted}{cpp}
+// Bounded knapsack dp on weight
+for(int i=0; i<n; i++){
+    for(int j = w-weight[i]; j >= 0; j--){
+        dp[j + weight[i]] = max(dp[j + weight[i]], dp[j] + value[i]);
+    }
+}
+
+// Bounded knapsack dp on value
+// v = sum of values (values[i])
+vector<int> dp(v+1, inf);
+dp[0] = 0;
+
+for(int i=0; i<n; i++){
+    for(int j = v-value[i]; j >= 0; j--){
+        dp[j + value[i]] = min(dp[j + value[i]], dp[j] + weight[i]);
+    }
+}
+
+for(int i=v; i>=0; i--){
+    if(dp[i] <= k){
+        res = i; // expected result
+        break;
+    }
+}
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{lcs}
+\addcontentsline{toc}{subsection}{lcs}
+}
+\begin{minted}{cpp}
+// Lowest Common Subsequence
+void solve(int tc){
+    int n, m, i1 = -1, i2 = -1;
+    string a, b;
+    string res = "";
+    cin>>a>>b;
+
+    n = a.size();
+    m = b.size();
+    vector<vector<int>> dp(m+1, vector<int> (n+1, 0));
+
+    for(int i=1; i<=m; i++){
+        for(int j=1; j<=n; j++){
+            if(a[j-1] == b[i-1]){
+                dp[i][j] = dp[i-1][j-1] + 1;
+            }
+            else{
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+            }
+        }
+    }
+
+    int i = m, j = n;
+
+    while(i > 0 && j > 0){
+        if (b[i-1] == a[j-1]) {
+            res += b[i-1];
+            i--, j--;
+        }
+        else if (dp[i-1][j] >= dp[i][j-1]) 
+            i--;
+        else
+            j--;
+    }
+
+    reverse(res.begin(), res.end());
+
+    cout<<res<<"\n";
+}
+\end{minted}
+
+\needspace{5\baselineskip}
+{
+\titleformat{\section}{\Huge\bfseries\centering}{\thesection}{1em}{#1}[\vspace{2em}]
+\phantomsection
+\section*{Geometry}
+\markboth{GEOMETRY}{}
+\addcontentsline{toc}{section}{Geometry}
+}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{convex hull}
+\addcontentsline{toc}{subsection}{convex hull}
+}
+\begin{minted}{cpp}
+typedef Point<ll> P;
+    vector<P>convexHull(vector<P> pts){
+    if (sz(pts)<=1) return pts;
+    sort(all(pts));
+    vector<P>h(sz(pts)+1);
+    int s=0,t=0;
+    for(int it=2;it--;s=--t,reverse(all(pts)))
+        for(P p:pts){
+            while (t>=s+2&&h[t-2].cross(h[t-1],p)<=0)t--;
+        h[t++]=p;
+    }
+    return{h.begin(),h.begin()+t-(t==2&&h[0]==h[1])};
+ }
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{point}
+\addcontentsline{toc}{subsection}{point}
+}
+\begin{minted}{cpp}
+template <class T> int sgn(T x) { return (x > 0) - (x < 0); }
+
+template <class T>
+struct Point {
+    typedef Point P;
+    T x, y;
+    explicit Point(T x = 0, T y = 0) : x(x), y(y) {}
+
+    bool operator<(P p) const { return tie(x, y) < tie(p.x, p.y); }
+    bool operator==(P p) const { return tie(x, y) == tie(p.x, p.y); }
+
+    P operator+(P p) const { return P(x + p.x, y + p.y); }
+    P operator-(P p) const { return P(x - p.x, y - p.y); }
+    P operator*(T d) const { return P(x * d, y * d); }
+    P operator/(T d) const { return P(x / d, y / d); }
+
+    T dot(P p) const { return x * p.x + y * p.y; }
+    T cross(P p) const { return x * p.y - y * p.x; }
+    T cross(P a, P b) const { return (a - *this).cross(b - *this); }
+
+    T dist2() const { return x * x + y * y; }
+    double dist() const { return sqrt((double)dist2()); }
+
+    // angle to x=
+    // axis in interval [= pi, pi]
+    double angle() const { return atan2(y, x); }
+
+    P unit() const { return *this / dist(); } // makes dist() = 1
+    P perp() const { return P(-y, x); }       // rotates +90 degrees
+    P normal() const { return perp().unit(); }
+
+    // returns point rotated ’a’ radians ccw around the origin
+    P rotate(double a) const {
+        return P(x * cos(a) - y * sin(a), x * sin(a) + y * cos(a));
+    }
+
+    friend ostream& operator<<(ostream& os, P p) {
+        return os << "(" << p.x << "," << p.y << ")";
+    }
+};
+
+\end{minted}
+
+\needspace{5\baselineskip}
+{
+\titleformat{\section}{\Huge\bfseries\centering}{\thesection}{1em}{#1}[\vspace{2em}]
+\phantomsection
+\section*{Mathematics}
+\markboth{MATHEMATICS}{}
+\addcontentsline{toc}{section}{Mathematics}
+}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{abmod}
+\addcontentsline{toc}{subsection}{abmod}
+}
+\begin{minted}{cpp}
+typedef unsigned long long ull;
+    ull modmul(ull a,ull b,ull M){
+        ll ret=a * b-M * ull(1.L/M * a * b);
+        return ret + M * (ret<0) - M * (ret>=(ll)M);
+    }
+
+    ull modpow(ull b,ull e,ull mod) {
+    ull ans=1;
+    for(;e;b=modmul(b,b,mod),e/=2)
+    if (e&1)ans=modmul(ans,b,mod);
+    return ans;
+}
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{bigmod}
+\addcontentsline{toc}{subsection}{bigmod}
+}
+\begin{minted}{cpp}
+long long binpow(long long a, long long b, long long m) {
+    a %= m;
+    long long res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
+    }
+    return res;
+}
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{euclid}
+\addcontentsline{toc}{subsection}{euclid}
+}
+\begin{minted}{cpp}
+ll euclid(ll a,ll b,ll& x,ll& y){
+    if (!b) return x=1,y=0,a;
+    ll d=euclid(b,a%b,y,x);
+    return y-=a/b * x,d;
+}
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{factorial}
+\addcontentsline{toc}{subsection}{factorial}
+}
+\begin{minted}{cpp}
+int fac[MAX]; // set max
+ 
+void pre() {
+    fac[0] = 1;
+    fac[1] = 1;
+    for(int i=2; i<MAX; i++) {
+        fac[i] = (fac[i-1]*i)%MOD;
+    }
+}
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{fft}
+\addcontentsline{toc}{subsection}{fft}
+}
+\begin{minted}{cpp}
+using cd = complex<double>;
+const double PI = acos(-1);
+
+void fft(vector<cd>& a, bool invert) {
+    int n = a.size();
+    if (n == 1)
+        return;
+
+    vector<cd> a0(n / 2), a1(n / 2);
+    for (int i = 0; 2 * i < n; i++) {
+        a0[i] = a[2*i];
+        a1[i] = a[2*i+1];
+    }
+    fft(a0, invert);
+    fft(a1, invert);
+
+    double ang = 2 * PI / n * (invert ? -1 : 1);
+    cd w(1), wn(cos(ang), sin(ang));
+    for (int i = 0; 2 * i < n; i++) {
+        a[i] = a0[i] + w * a1[i];
+        a[i + n/2] = a0[i] - w * a1[i];
+        if (invert) {
+            a[i] /= 2;
+            a[i + n/2] /= 2;
+        }
+        w *= wn;
+    }
+}
+
+vector<int> multiply(vector<int> const& a, vector<int> const& b) {
+    vector<cd> fa(a.begin(), a.end()), fb(b.begin(), b.end());
+    int n = 1;
+    while (n < a.size() + b.size()) 
+        n <<= 1;
+    fa.resize(n);
+    fb.resize(n);
+
+    fft(fa, false);
+    fft(fb, false);
+    for (int i = 0; i < n; i++)
+        fa[i] *= fb[i];
+    fft(fa, true);
+
+    vector<int> result(n);
+    for (int i = 0; i < n; i++)
+        result[i] = round(fa[i].real());
+    return result;
+}
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{inverse mod}
+\addcontentsline{toc}{subsection}{inverse mod}
+}
+\begin{minted}{cpp}
+int inv(int a) {
+    return a <= 1 ? a : m - (long long)(m/a) * inv(m % a) % m;
+}
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{Modular Arithmatic}
+\addcontentsline{toc}{subsection}{Modular Arithmatic}
+}
+\begin{minted}{cpp}
+const ll mod=17;// change to something else
+struct Mod{
+    ll x;
+    Mod(ll xx): x(xx){}
+    Mod operator + (Mod b) {return Mod((x+b.x)%mod);}
+    Mod operator - (Mod b){return Mod((x-b.x+mod)%mod);}
+    Mod operator * (Mod b) {return Mod((x * b.x)%mod);}
+    Mod operator / (Mod b){return *this * invert(b);}
+    Mod invert(Mod a){
+        ll x,y,g=euclid(a.x,mod,x,y);
+        assert(g==1); 
+        return Mod((x+mod)%mod);
+    }
+    Mod operator ^ (ll e){
+        if (!e)return Mod(1);
+        Mod r= *this ^(e/2);r=r * r;
+        return e&1? *this * r:r;
+    }
+ };
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{ncr}
+\addcontentsline{toc}{subsection}{ncr}
+}
+\begin{minted}{cpp}
+int ncr(int n, int r) {
+    if(r>n) return 0;
+    int d = (fac[n-r] * fac[r]) % MOD;
+    int ind = inv(d);
+    dbg(n, r, (fac[n]*ind)%MOD);
+    return (fac[n]*ind)%MOD;
+}
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{phi}
+\addcontentsline{toc}{subsection}{phi}
+}
+\begin{minted}{cpp}
+int phi(int n) {
+  int ret = n;
+  for (int i = 2; i * i <= n; i++) {
+    if (n % i == 0) {
+      while (n % p == 0) n /= i;
+      ret -= ret / i;
+    }
+  }
+  if (n > 1) ret -= ret / n;
+  return ret;
+}
+
+void phi_in_range() {
+  int N = 1e6, phi[N + 1];
+  for (int i = 0; i <= N; i++) phi[i] = i;
+  for (int i = 2; i <= N; i++) {
+    if (phi[i] != i) continue;
+    for (int j = i; j <= N; j += i) {
+      phi[j] -= phi[j] / i;
+    }
+  }
+}
+
+// some important properties of phi
+// phi(p) = p-1 , where p is a prime number
+// phi(a*b) = phi(a)*phi(b) , where a and b are co-prime
+// phi(a*b) = phi(a)*phi(b)*(gcd(a,b)/phi(gcd(a,b))) , for any number
+// phi(p^k) = p^k - p^(k-1) 
+// Sum of values of totient functions of all divisors of n is equal to n.
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{sieve}
+\addcontentsline{toc}{subsection}{sieve}
+}
+\begin{minted}{cpp}
+vector<bool> sieve(int n) {
+    vector<bool> primes(n + 1, true);
+ 
+    primes[0] = primes[1] = false;
+ 
+    for(int i=2; i*i<=n; i++) {
+        if(primes[i]) {
+            for(int j =i*i; j<=n; j+=i)
+                primes[j] = false;
+        }
+    }
+    
+    return primes;
+}
+ 
+vector<int> primes;
+ 
+void init() {
+    vector<bool> sv = sieve(1e8);
+    for(int i=1; i<sv.size(); i++) {
+        if(sv[i])
+            primes.pb(i);
+    }
+}
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{spf}
+\addcontentsline{toc}{subsection}{spf}
+}
+\begin{minted}{cpp}
+#define MAXN 100001
+vector<int> spf(MAXN + 1, 1);
+
+// Calculating SPF (Smallest Prime Factor) for every
+// number till MAXN.
+// Time Complexity : O(nloglogn)
+void sieve()
+{
+    // stores smallest prime factor for every number
+
+    spf[0] = 0;
+    for (int i = 2; i <= MAXN; i++) {
+        if (spf[i] == 1) { // if the number is prime ,mark
+                           // all its multiples who havent
+                           // gotten their spf yet
+            for (int j = i; j <= MAXN; j += i) {
+                if (spf[j]== 1) // if its smallest prime factor is
+                          // 1 means its spf hasnt been
+                          // found yet so change it to i
+                    spf[j] = i;
+            }
+        }
+    }
+}
+
+// A O(log n) function returning primefactorization
+// by dividing by smallest prime factor at every step
+vector<int> getFactorization(int x)
+{
+    vector<int> ret;
+    while (x != 1) {
+        ret.push_back(spf[x]);
+        x = x / spf[x];
+    }
+    return ret;
+}
+\end{minted}
+
+\needspace{5\baselineskip}
+{
+\titleformat{\section}{\Huge\bfseries\centering}{\thesection}{1em}{#1}[\vspace{2em}]
+\phantomsection
+\section*{Personal Templates}
+\markboth{PERSONAL TEMPLATES}{}
+\addcontentsline{toc}{section}{Personal Templates}
+}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{Ashraful's Template}
+\addcontentsline{toc}{subsection}{Ashraful's Template}
+}
+\begin{minted}{cpp}
+
+/*
+Author: Md. Ashraful Islam
+Copyright @ All Rights Reserved
+*/
+
+#include <bits/stdc++.h>
+
+#define ll long long
+#define ld long double
+#define pb push_back
+#define pf push_front
+#define pll pair<long long, long long>
+#define asort(a) sort(a.begin(), a.end()) 
+#define arsort(a,n) sort(a, a+n)
+#define MAX 2000005
+#define MOD 998244353
+#define faster {ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);}
+#define endl "\n"
+#define pii pair<int, int>
+#define rep(i, a, b) for(int i = a; i < (b); ++i)
+#define all(x) begin(x), end(x)
+#define sz(x) (int)(x).size()
+
+using namespace std;
+typedef vector<int> vi;
+
+//using namespace __gnu_pbds;
+
+#include <ext/pb_ds/assoc_container.hpp> 
+#include <ext/pb_ds/tree_policy.hpp> 
+using namespace __gnu_pbds; 
+  
+#define ordered_set tree<pair<long long, long long>, null_type,less<pair<long long, long long>>, rb_tree_tag,tree_order_statistics_node_update >
+#define ordered_multiset tree<unsigned long long, null_type,less_equal<unsigned long long>, rb_tree_tag,tree_order_statistics_node_update >
+
+
+#ifndef ONLINE_JUDGE
+#include "dbg.h"
+#else
+#define dbg(...) {/*temon kichu na*/}
+#endif
+
+#define int long long
+
+void solve() {
+	$1	
+}
+
+signed main() {
+    faster;
+    bool NO_TEST_CASE = true;
+    bool PRll_CASE = false;
+    bool INLINE_CASE = true;
+
+    ll T;
+    if(NO_TEST_CASE) {
+        T = 1;
+    } else {
+        cin >> T;
+    }
+    for(ll t=1; t<=T; t++) {
+        if(PRll_CASE) {
+            cout << "Case " << t << ": "; 
+            if(!INLINE_CASE) {
+                cout << endl;
+            }
+        }
+        solve();
+    }
+    return 0;
+} 
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{build system}
+\addcontentsline{toc}{subsection}{build system}
+}
+\begin{minted}{cpp}
+// * Sublime Text Build System *
+{
+  "shell_cmd": "g++ $file -o $file_base_name && ./$file_base_name< input.txt > output.txt && rm $file_base_name",
+  "working_dir": "$file_path",
+  "selector": "source.c++"
+}
+
+{
+    "cmd": [
+        "g++",
+        "-std=c++14",
+        "-DSONIC",
+        "$file_name",
+        "-o",
+        "$file_base_name",
+        "&&",
+        "timeout",
+        "4s",
+        "./$file_base_name< inputf.in > outputf.in"
+    ],
+
+    "selector": "source.cpp",
+    "file_regex": "^(.*?):([0-9]+):([0-9]+)?:?(.*)$",
+    "shell": true,
+    "working_dir": "$file_path"
+}
+\end{minted}
+
+\needspace{5\baselineskip}
+{
+\titleformat{\section}{\Huge\bfseries\centering}{\thesection}{1em}{#1}[\vspace{2em}]
+\phantomsection
+\section*{Problems}
+\markboth{PROBLEMS}{}
+\addcontentsline{toc}{section}{Problems}
+}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{maxmatch fft}
+\addcontentsline{toc}{subsection}{maxmatch fft}
+}
+\begin{minted}{cpp}
+You're given a string s consisting of letters 'a', 'b' and 'c'.
+
+The matching function ms( i ) is defined as the number of matching characters of s and its i-shift. In other words, ms( i ) is the number of characters that are matched when you align the 0-th character of s with the i-th character of its copy.
+
+You are asked to compute the maximum of ms( i ) for all i ( 1 <= i <= |s| ). To make it a bit harder, you should also output all the optimal i's in increasing order.
+
+Input
+The first and only line of input contains the string s. 2 <= |s| <= 105.
+
+Output
+The first line of output contains the maximal ms( i ) over all i.
+
+The second line of output contains all the i's for which ms( i ) reaches maximum.
+
+Example
+Input:
+caccacaa
+
+Output:
+4
+3
+Explanation:
+caccacaa
+   caccacaa
+The underlined characters indicate the ones that match when shift = 3.
+
+Editorial:
+The main idea for this problem is to compute the maximum number of pairs of identical elements which have the same "shift" value (e.g. s[4]
+ and s[1]
+ is an example of such a pair with shift 4−1=3
+, since s[4]=s[1]
+). With this in mind, the trick is:
+
+For each distinct character c
+, we will represent the set of that character's positions with a polynomial f(x)
+, where term xi
+ exists if and only if s[i]=c
+. Then, we can imagine a second string with the same indices but negative represented by g(x)
+, since the indices of the second string are effectively "cancelling" that of the first. Once we multiply these 2 polynomials together, it will effectively produce a frequency array for each shift value. For example, in the pair mentioned above, we notice that f(x)
+ will contain term x4
+ and g(x)
+ will contain term x−1
+. From this specific pair, the resulting polynomial f(x)×g(x)
+ will have the coefficient of term x^4×x^−1=x3
+ increased by 1
+.
+
+Hopefully from the example above you see why the resulting polynomial f(x)×g(x)
+ represents the frequency array of each shift value. Once you have the frequency array for each distinct character, you can simply add them up and find the terms with a positive degree having the largest coefficient.
+
+The final complexity of this approach will be O(3×NlogN)
+ with FFT.
+
+→ Reply
+\end{minted}
+
+\needspace{5\baselineskip}
+{
+\titleformat{\section}{\Huge\bfseries\centering}{\thesection}{1em}{#1}[\vspace{2em}]
+\phantomsection
+\section*{Range Queries}
+\markboth{RANGE QUERIES}{}
+\addcontentsline{toc}{section}{Range Queries}
+}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{2dprefix}
+\addcontentsline{toc}{subsection}{2dprefix}
+}
+\begin{minted}{cpp}
+// 2D prefix sum
+class Matrix {
+private:
+    vector<vector<int>> v;
+    int n, m;
+
+public:
+    // feed 0-indexed based matrix in
+    Matrix(const vector<vector<int>>& in) {
+        n = in.size();
+        m = in[0].size();
+        v = vector<vector<int>>(n+1, vector<int>(m+1, 0));
+
+        for(int i=1; i<=n; i++){
+            for(int j=1; j<=m; j++) {
+                v[i][j] = in[i-1][j-1] 
+                        + v[i-1][j] 
+                        + v[i][j-1] 
+                        - v[i-1][j-1];
+            }
+        }
+    }
+
+    void boundCheck(int &x1, int &y1, int &x2, int &y2, int x){
+        x1 = max(x1, 0LL+x);
+        x1 = min(x1, n-1+x);
+        y1 = max(y1, 0LL+x);
+        y1 = min(y1, m-1+x);
+        x2 = max(x2, 0LL+x);
+        x2 = min(x2, n-1+x);
+        y2 = max(y2, 0LL+x);
+        y2 = min(y2, m-1+x);
+    }
+
+    // 1-indexed query
+    int query(int x1, int y1, int x2, int y2) {
+        boundCheck(x1, y1, x2, y2, 1);
+
+        return v[x2][y2]
+             - v[x1-1][y2]
+             - v[x2][y1-1]
+             + v[x1-1][y1-1];
+    }
+
+    // 0-indexed query
+    int query0(int x1, int y1, int x2, int y2) {
+        boundCheck(x1, y1, x2, y2, 0);
+
+        return v[x2+1][y2+1]
+             - v[x1][y2+1]
+             - v[x2+1][y1]
+             + v[x1][y1];
+    }
+};
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{nearest}
+\addcontentsline{toc}{subsection}{nearest}
+}
+\begin{minted}{cpp}
+// nearest smaller element
+void build(int input[], int pre[], int n, const string &op)
+{
+    deque<int> d;
+
+    for(int i=1; i<=n; i++){
+        int x = input[i];
+        
+        while(1){
+            if(d.size() == 0){
+                pre[i] = -1;
+                d.push_back(x);
+                break;
+            }
+
+            if(op == "pre"){
+                if(d.back() < x){
+                    pre[i] = d.back();
+                    d.push_back(x);
+                    break;
+                }
+                else
+                    d.pop_back();
+            }
+            else{
+                if(d.front() < x){
+                    pre[i] = d.front();
+                    d.push_front(x);
+                    break;
+                }
+                else
+                    d.pop_front();
+            }
+        }
+    }
+}
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{rmq}
+\addcontentsline{toc}{subsection}{rmq}
+}
+\begin{minted}{cpp}
+
+template<class T>
+struct RMQ {
+    vector<vector<T>> jmp;
+    RMQ(const vector<T>& V) : jmp(1, V) {
+        for (int pw = 1, k = 1; pw * 2 <= sz(V); pw *= 2, ++k) {
+            jmp.emplace_back(sz(V) - pw * 2 + 1);
+            rep(j,0,sz(jmp[k]))
+            jmp[k][j] = min(jmp[k - 1][j], jmp[k - 1][j + pw]);
+        }
+    }
+
+    T query(int a, int b) {
+        assert(a < b); // or return in f i f a == b
+        int dep = 31 - __builtin_clz(b - a);
+        return min(jmp[dep][a], jmp[dep][b - (1 << dep)]);
+    }
+};
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{segtree}
+\addcontentsline{toc}{subsection}{segtree}
+}
+\begin{minted}{cpp}
+
+class SegmentTree {
+public:
+    int *arr, *tree;
+    int _size;
+    SegmentTree(vector<int> v) {
+        int size = v.size();
+        _size = size;
+        arr = new int[size+10];
+        for(int i=1; i<=size; i++) {
+            arr[i] = v[i-1];
+        }
+        tree = new int[(size+10)*4];
+        build(1, 1, size);
+    }
+
+    void build(int node, int b, int e)
+    {
+        int left, right, mid;
+        if(b == e){
+             tree[node] = arr[b];
+             return;
+        }
+        left = node*2;
+        right = node*2 + 1;
+        mid = (b+e)/2;
+        build(left, b, mid);
+        build(right, mid+1, e);
+        tree[node] = tree[left] + tree[right];
+    }
+
+    int query(int node, int b, int e, int i, int j)
+    {
+        int left, right, mid;
+        if(i > j)
+             return 0;
+        if(i == b && j == e)
+             return tree[node];
+        mid = (b+e)/2;
+        left = 2*node;
+        right = 2*node + 1;
+        return query(left, b, mid, i, min(j, mid)) + query(right, mid+1, e, max(mid+1, i), j);
+    }
+
+    int query(int l, int r) {
+        return query(1, 1, _size, l, r);
+    }
+};
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{segtree lazy}
+\addcontentsline{toc}{subsection}{segtree lazy}
+}
+\begin{minted}{cpp}
+class SegmentTree {
+    LL n;
+    VI tree, lazy;
+    LL merge(LL a, LL b) {
+        return a + b;
+    }
+
+public:
+    SegmentTree(LL size) {
+        n = size;
+        tree.assign(n << 2, 0);
+        lazy.assign(n << 2, 0);
+    }
+
+    void build(LL u, LL l, LL r, VI &v) {
+        if (l == r) {
+            tree[u] = v[l];
+            return;
+        }
+        LL m = l + ((r - l) >> 1);
+        LL lc = u << 1, rc = lc | 1;
+        build(lc, l, m, v);
+        build(rc, m + 1, r, v);
+        tree[u] = merge(tree[lc], tree[rc]);
+    }
+
+    void propagate(LL u, LL l, LL r) {
+        if (lazy[u] != 0) {
+            tree[u] += lazy[u] * (r - l + 1);
+            if (l != r) {
+                LL lc = u << 1, rc = lc | 1;
+                lazy[lc] += lazy[u];
+                lazy[rc] += lazy[u];
+            }
+            lazy[u] = 0;
+        }
+    }
+
+    void update(LL u, LL l, LL r, LL ql, LL qr, LL val) {
+        propagate(u, l, r);
+        if (ql > r || qr < l) return;
+        if (ql <= l && r <= qr) {
+            lazy[u] += val;
+            propagate(u, l, r);
+            return;
+        }
+        LL m = l + ((r - l) >> 1);
+        LL lc = u << 1, rc = lc | 1;
+        update(lc, l, m, ql, qr, val);
+        update(rc, m + 1, r, ql, qr, val);
+        tree[u] = merge(tree[lc], tree[rc]);
+    }
+
+    LL query(LL u, LL l, LL r, LL ql, LL qr) {
+        propagate(u, l, r);
+        if (ql > r || qr < l) return 0;
+        if (ql <= l && r <= qr) return tree[u];
+        LL m = l + ((r - l) >> 1);
+        LL lc = u << 1, rc = lc | 1;
+        return merge(query(lc, l, m, ql, qr), query(rc, m + 1, r, ql, qr));
+    }
+};
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{segtree update}
+\addcontentsline{toc}{subsection}{segtree update}
+}
+\begin{minted}{cpp}
+
+class SegmentTree {
+public:
+    int *arr, *tree;
+    int _size;
+    SegmentTree(vector<int> v) {
+        int size = v.size();
+        _size = size;
+        arr = new int[size+10];
+        for(int i=1; i<=size; i++) {
+            arr[i] = v[i-1];
+        }
+        tree = new int[(size+10)*4];
+        build(1, 1, size);
+    }
+
+    void build(int node, int b, int e)
+    {
+        int left, right, mid;
+        if(b == e){
+             tree[node] = arr[b];
+             return;
+        }
+        left = node*2;
+        right = node*2 + 1;
+        mid = (b+e)/2;
+        build(left, b, mid);
+        build(right, mid+1, e);
+        tree[node] = min(tree[left], tree[right]);
+    }
+
+    int query(int node, int b, int e, int i, int j)
+    {
+        int left, right, mid;
+        if(i > j)
+             return INT_MAX;
+        if(i == b && j == e)
+             return tree[node];
+        mid = (b+e)/2;
+        left = 2*node;
+        right = 2*node + 1;
+        return min(query(left, b, mid, i, min(j, mid)), query(right, mid+1, e, max(mid+1, i), j));
+    }
+
+    int query(int l, int r) {
+        return query(1, 1, _size, l, r);
+    }
+
+    void update(int node, int b, int e, int i, int newvalue)
+    {
+        if (i > e || i < b)
+            return; 
+        if (b >= i && e <= i) {
+            tree[node] = newvalue;
+            return;
+        }
+        int Left = node * 2; 
+        
+        int Right = node * 2 + 1;
+        int mid = (b + e) / 2;
+        update(Left, b, mid, i, newvalue);
+        update(Right, mid + 1, e, i, newvalue);
+        tree[node] = min(tree[Left], tree[Right]);
+    }
+
+    void update(int i, int val) {
+        update(1, 1, _size, i, val);
+    }
+};
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{sortedarray}
+\addcontentsline{toc}{subsection}{sortedarray}
+}
+\begin{minted}{cpp}
+
+class SortedArray {
+    ordered_multiset arr;
+public:
+    long long size() { return arr.size(); }
+    void operator += (long long x) { arr.insert(x); } 
+    long long operator < (long long x) { return arr.order_of_key(x); }
+    long long operator <= (long long x) { return arr.order_of_key(x+1); }
+    long long operator > (long long x) { return arr.size() - arr.order_of_key(x+1); }
+    long long operator >= (long long x) { return arr.size() - arr.order_of_key(x); }
+    long long LR(long long l, long long r) { return max((*this <= r) - (*this < l), 0LL); }
+    long long lR(long long l, long long r) { return LR(l+1, r); }
+    long long Lr(long long l, long long r) { return LR(l, r-1); }
+    long long lr(long long l, long long r) { return LR(l+1, r-1); }
+    long long operator [] (long long i) { return *arr.find_by_order(i); }
+};
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{subarray sums}
+\addcontentsline{toc}{subsection}{subarray sums}
+}
+\begin{minted}{cpp}
+// maximum and minimum subarray sum
+int maxs(vector<int> &a, int n)
+{
+    if(n == 0)
+        return 0;
+
+    int maxn = LONG_LONG_MIN, curr = 0;
+
+    for(auto p:a) {
+        curr = max(p, curr + p); 
+        maxn = max(maxn, curr);   
+    }
+
+    if(maxn <= 0)
+        return 0;
+    return maxn;
+}
+
+int mins(vector<int> &a, int n){
+    if(n == 0)
+        return 0;
+
+    int minn = LONG_LONG_MAX, curr = 0;
+
+    for(auto p:a) {
+        curr = min(p, curr + p); 
+        minn = min(minn, curr);   
+    }
+
+    if(minn >= 0)
+        return 0;
+    return minn;
+}
+\end{minted}
+
+\needspace{5\baselineskip}
+{
+\titleformat{\section}{\Huge\bfseries\centering}{\thesection}{1em}{#1}[\vspace{2em}]
+\phantomsection
+\section*{Stress Testing}
+\markboth{STRESS TESTING}{}
+\addcontentsline{toc}{section}{Stress Testing}
+}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{gen}
+\addcontentsline{toc}{subsection}{gen}
+}
+\begin{minted}{cpp}
+#include<bits/stdc++.h>
+using namespace std;
+using ll = long long;
+mt19937 rng(chrono::system_clock::now().time_since_epoch().count());
+ll random(ll a , ll b){
+    if(a>b) return 0;
+    return a +rng()%(b-a+1);
+}
+
+void perm(ll n) {
+    int x;
+    map<int, int> exists;
+    for(int i=1; i<=n; i++) {
+        tryagain:;
+        x = random(1, n);
+        if(exists[x]) {
+            goto tryagain;
+        }
+        cout << x << " ";
+        exists[x]++;
+    }
+    cout << endl;
+}
+
+int main(){
+    cout << 1 << endl;
+    map<int, int> exists;
+    int n = random(2, 10);
+    cout << n << endl;
+    perm(n);
+    perm(n);
+}
+\end{minted}
+
+\needspace{5\baselineskip}
+{
+\titleformat{\section}{\Huge\bfseries\centering}{\thesection}{1em}{#1}[\vspace{2em}]
+\phantomsection
+\section*{String}
+\markboth{STRING}{}
+\addcontentsline{toc}{section}{String}
+}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{Hashing}
+\addcontentsline{toc}{subsection}{Hashing}
+}
+\begin{minted}{cpp}
+
+typedef long long LL;
+typedef pair<LL, LL> PLL;
+
+namespace Hashing {
+    #define ff first
+    #define ss second
+
+    const PLL M = {1e9+7, 1e9+9};        ///Should be large primes
+    const LL base = 1259;                ///Should be larger than alphabet size
+    const int N = 1e6+7;                 ///Highest length of string
+
+    PLL operator+ (const PLL& a, LL x)     {return {a.ff + x, a.ss + x};}
+    PLL operator- (const PLL& a, LL x)     {return {a.ff - x, a.ss - x};}
+    PLL operator* (const PLL& a, LL x)     {return {a.ff * x, a.ss * x};}
+    PLL operator+ (const PLL& a, PLL x)    {return {a.ff + x.ff, a.ss + x.ss};}
+    PLL operator- (const PLL& a, PLL x)    {return {a.ff - x.ff, a.ss - x.ss};}
+    PLL operator* (const PLL& a, PLL x)    {return {a.ff * x.ff, a.ss * x.ss};}
+    PLL operator% (const PLL& a, PLL m)    {return {a.ff % m.ff, a.ss % m.ss};}
+    ostream& operator<<(ostream& os, PLL hash) {
+        return os<<"("<<hash.ff<<", "<<hash.ss<<")";
+    }
+    PLL pb[N];      ///powers of base mod M
+
+    ///Call pre before everything
+    void hashPre() {
+        pb[0] = {1,1};
+        for (int i=1; i<N; i++)     pb[i] = (pb[i-1] * base)%M;
+    }
+
+    ///Calculates hashes of all prefixes of s including empty prefix
+    vector<PLL> hashList(string s) {
+        int n = s.size();
+        vector<PLL> ans(n+1);
+        ans[0] = {0,0};
+        for (int i=1; i<=n; i++)    ans[i] = (ans[i-1] * base + s[i-1])%M;
+        return ans;
+    }
+
+    ///Calculates hash of substring s[l..r] (1 indexed)
+    PLL substringHash(const vector<PLL> &hashlist, int l, int r) {
+        return (hashlist[r]+(M-hashlist[l-1])*pb[r-l+1])%M;
+    }
+
+    ///Calculates Hash of a string
+    PLL Hash (string s) {
+        PLL ans = {0,0};
+        for (int i=0; i<s.size(); i++)  ans=(ans*base + s[i])%M;
+        return ans;
+    }
+
+    ///Tested on https://toph.co/p/palindromist
+    ///appends c to string
+    PLL append(PLL cur, char c) {
+        return (cur*base + c)%M;
+    }
+
+    ///Tested on https://toph.co/p/palindromist
+    ///prepends c to string with size k
+    PLL prepend(PLL cur, int k, char c) {
+        return (pb[k]*c + cur)%M;
+    }
+
+    ///Tested on https://toph.co/p/chikongunia
+    ///replaces the i-th (0-indexed) character from right from a to b;
+    PLL replace(PLL cur, int i, char a, char b) {
+        return cur + pb[i] * (M+b-a)%M;
+    }
+
+    ///Erases c from front of the string with size len
+    PLL pop_front(PLL hash, int len, char c) {
+        return (hash + pb[len-1]*(M-c))%M;
+    }
+
+    ///Tested on https://toph.co/p/palindromist
+    ///concatenates two strings where length of the right is k
+    PLL concat(PLL left, PLL right, int k) {
+        return (left*pb[k] + right)%M;
+    }
+
+    PLL power (const PLL& a, LL p) {
+        if (p==0)   return {1,1};
+        PLL ans = power(a, p/2);
+        ans = (ans * ans)%M;
+        if (p%2)    ans = (ans*a)%M;
+        return ans;
+    }
+
+    PLL inverse(PLL a)  {
+        if (M.ss == 1)  return power(a, M.ff-2);
+        return power(a, (M.ff-1)*(M.ss-1)-1);
+    }
+
+    ///Erases c from the back of the string
+    PLL invb = inverse({base, base});
+    PLL pop_back(PLL hash, char c) {
+        return ((hash-c+M)*invb)%M;
+    }
+
+    ///Tested on https://toph.co/p/palindromist
+    ///Calculates hash of string with size len repeated cnt times
+    ///This is O(log n). For O(1), pre-calculate inverses
+    PLL repeat(PLL hash, int len, LL cnt) {
+        PLL mul = ((pb[len*cnt]-1+M) * inverse(pb[len]-1+M))%M;
+        PLL ans = (hash*mul);
+        if (pb[len].ff == 1)    ans.ff = hash.ff*cnt;
+        if (pb[len].ss == 1)    ans.ss = hash.ss*cnt;
+        return ans%M;
+    }
+}
+
+/// Solves https://judge.yosupo.jp/problem/enumerate_palindromes
+using namespace Hashing;
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{kmp}
+\addcontentsline{toc}{subsection}{kmp}
+}
+\begin{minted}{cpp}
+
+vi pi(const string& s) {
+    vi p(sz(s));
+    rep(i,1,sz(s)) {
+        int g = p[i-1];
+        while (g && s[i] != s[g]) g = p[g-1];
+        p[i] = g + (s[i] == s[g]);
+    }
+    return p;
+}
+
+vi match(const string& s, const string& pat) {
+    vi p = pi(pat + '\0' + s), res;
+    rep(i,sz(p)-sz(s),sz(p))
+        if (p[i] == sz(pat)) res.push_back(i - 2 * sz(pat));
+    return res;
+}
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{manacher}
+\addcontentsline{toc}{subsection}{manacher}
+}
+\begin{minted}{cpp}
+
+array<vi, 2> manacher(const string& s) {
+    int n = sz(s);
+    array<vi,2> p = {vi(n+1), vi(n)};
+    rep(z,0,2) for (int i=0,l=0,r=0; i < n; i++) {
+        int t = r-i+!z;
+        if (i<r) p[z][i] = min(t, p[z][l+t]);
+        int L = i-p[z][i], R = i+p[z][i]-!z;
+        while (L>=1 && R+1<n && s[L-1] == s[R+1])
+            p[z][i]++, L--, R++;
+        if (R>r) l=L, r=R;
+    }
+    return p;
+}
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{minrotation}
+\addcontentsline{toc}{subsection}{minrotation}
+}
+\begin{minted}{cpp}
+
+int minRotation(string s) {
+    int a=0, N=sz(s); s += s;
+    rep(b,0,N) rep(k,0,N) {
+        if (a+k == b || s[a+k] < s[b+k]) {b += max(0LL, k-1); break;}
+        if (s[a+k] > s[b+k]) { a = b; break; }
+    }
+    return a;
+}
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{suffix array}
+\addcontentsline{toc}{subsection}{suffix array}
+}
+\begin{minted}{cpp}
+
+struct SuffixArray {
+    vi sa, lcp;
+    SuffixArray(string& s, int lim=256) { // or basic string<int>
+        int n = sz(s) + 1, k = 0, a, b;
+        vi x(all(s)), y(n), ws(max(n, lim));
+        x.push_back(0), sa = lcp = y, iota(all(sa), 0);
+        for (int j = 0, p = 0; p < n; j = max(1LL, j * 2), lim = p) {
+            p = j, iota(all(y), n - j);
+            rep(i,0,n) if (sa[i] >= j) y[p++] = sa[i] - j;
+            fill(all(ws), 0);
+            rep(i,0,n) ws[x[i]]++;
+            rep(i,1,lim) ws[i] += ws[i - 1];
+            for (int i = n; i--;) sa[--ws[x[y[i]]]] = y[i];
+            swap(x, y), p = 1, x[sa[0]] = 0;
+            rep(i,1,n) a = sa[i - 1], b = sa[i], x[b] =
+                (y[a] == y[b] && y[a + j] == y[b + j]) ? p - 1 : p++;
+            }
+            for (int i = 0, j; i < n - 1; lcp[x[i++]] = k)
+                for (k && k--, j = sa[x[i] - 1];
+                    s[i + k] == s[j + k]; k++);
+    }
+};
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{suffix tree}
+\addcontentsline{toc}{subsection}{suffix tree}
+}
+\begin{minted}{cpp}
+
+struct SuffixTree {
+    static const int ALPHA = 28;
+    int toi(char c) { return c - 'a'; }
+    string a;
+    
+    vector<vector<int>> t;
+    vector<int> l, r, p, s;
+    int v = 0, q = 0, m = 2;
+
+    void ukkadd(int i, int c) { 
+    suff:
+        if (r[v] <= q) {
+            if (t[v][c] == -1) {
+                t[v][c] = m; l[m] = i;
+                p[m++] = v; v = s[v]; q = r[v]; goto suff;
+            }
+            v = t[v][c]; q = l[v];
+        }
+        if (q == -1 || c == toi(a[q])) q++;
+        else {
+            l[m + 1] = i; p[m + 1] = m; l[m] = l[v]; r[m] = q;
+            p[m] = p[v]; t[m][c] = m + 1; t[m][toi(a[q])] = v;
+            l[v] = q; p[v] = m; t[p[m]][toi(a[l[m]])] = m;
+            v = s[p[m]]; q = l[m];
+            while (q < r[m]) { v = t[v][toi(a[q])]; q += r[v] - l[v]; }
+            if (q == r[m]) s[m] = v; else s[m] = m + 2;
+            q = r[v] - (q - r[m]); m += 2; goto suff;
+        }
+    }
+
+    SuffixTree(string a) : a(a) {
+        int N = 2 * sz(a) + 10;
+        t.assign(N, vector<int>(ALPHA, -1));
+        l.assign(N, 0); r.assign(N, sz(a));
+        p.assign(N, 0); s.assign(N, 0);
+
+        fill(t[1].begin(), t[1].end(), 0);
+        s[0] = 1; l[0] = l[1] = -1; r[0] = r[1] = p[0] = p[1] = 0;
+
+        rep(i, 0, sz(a)) ukkadd(i, toi(a[i]));
+    }
+
+    pii best;
+    int lcs(int node, int i1, int i2, int olen) {
+        if (l[node] <= i1 && i1 < r[node]) return 1;
+        if (l[node] <= i2 && i2 < r[node]) return 2;
+        int mask = 0, len = node ? olen + (r[node] - l[node]) : 0;
+        rep(c, 0, ALPHA) if (t[node][c] != -1)
+            mask |= lcs(t[node][c], i1, i2, len);
+        if (mask == 3)
+            best = max(best, {len, r[node] - len});
+        return mask;
+    }
+
+    static pii LCS(string s, string t) {
+        SuffixTree st(s + (char)('z' + 1) + t + (char)('z' + 2));
+        st.lcs(0, sz(s), sz(s) + 1 + sz(t), 0);
+        return st.best;
+    }
+};
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{zfunc}
+\addcontentsline{toc}{subsection}{zfunc}
+}
+\begin{minted}{cpp}
+
+vi Z(const string& S) {
+    vi z(sz(S));
+    int l = -1, r = -1;
+    rep(i,1,sz(S)) {
+        z[i] = i >= r ? 0 : min(r - i, z[i - l]);
+        while (i + z[i] < sz(S) && S[i + z[i]] == S[z[i]])
+            z[i]++;
+        if (i + z[i] > r)
+            l = i, r = i + z[i];
+    }
+    return z;
+}
+
+\end{minted}
+
+\needspace{5\baselineskip}
+{
+\titleformat{\section}{\Huge\bfseries\centering}{\thesection}{1em}{#1}[\vspace{2em}]
+\phantomsection
+\section*{Trees}
+\markboth{TREES}{}
+\addcontentsline{toc}{section}{Trees}
+}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{centroid decomposition}
+\addcontentsline{toc}{subsection}{centroid decomposition}
+}
+\begin{minted}{cpp}
+// * LCA and Centroid decomposition
+template<typename DT>
+struct Tree {
+    vector<vector<DT>> adj;
+    Tree(int N) : adj(N + 1) {}
+    Tree() {}
+
+    void addEdges(int u, int v) {
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    void addEdges(int u, int v, int w) {
+        adj[u].push_back({v, w});
+        adj[v].push_back({u, w});
+    }
+    void dfs(int u, int p, Tree &Btree, int &T){
+        int last = 0, tmp = 0;
+        for(auto [v, w]: adj[u]){
+            if(v == p) continue;
+            tmp++;
+            if(tmp == 1){
+                Btree.addEdges(u, v, w);
+                last = u;
+            }else if(tmp == (int) adj[u].size() - (u != 1)){
+                Btree.addEdges(last, v, w);
+            }else{
+                Btree.addEdges(last, ++T, 0);
+                Btree.addEdges(T, v, w);
+                last = T;
+            }
+        }
+        for(auto [v, w]: adj[u]){
+            if(v != p) dfs(v, u, Btree, T);
+        }
+    }
+    Tree<pair<int, int>> binarize(){
+        int N = adj.size() - 1;
+        int T = N;
+        Tree<pair<int, int>> Btree(2 * N);
+        dfs(1, 0, Btree, T);
+        Btree.adj.resize(T + 1);
+        return Btree;
+    }
+};
+
+class LCA{
+    int N, K;
+    vector<vector<int>> &adj, anc;
+    vector<int> level;
+
+public:
+    
+    LCA(Tree<int> &tree): adj(tree.adj){
+        N = tree.adj.size() - 1;
+        K = 33 - __builtin_clz(N);
+        anc.assign(N + 1, vector<int>(K));
+        level.assign(N + 1, 0);
+        initLCA(1);
+    }
+    
+    void initLCA(int u, int p = 0){
+        anc[u][0] = p;
+        level[u] = level[p] + 1;
+        for(int i = 1; i < K; i++){
+            anc[u][i] = anc[anc[u][i - 1]][i - 1];
+        }
+        for(auto v: adj[u]) if(v != p){
+            initLCA(v, u);
+        }
+    }
+    int getAnc(int u, int k){
+        for(int i = K - 1; i >= 0; i--)
+            if(k & (1<<i)) u = anc[u][i];
+        return u;
+    }
+    int lca(int u, int v){
+        if(level[u] > level[v]) swap(u, v);
+        v = getAnc(v, level[v] - level[u]);
+        
+        if(u == v) return u;
+        for(int i = K - 1; i >= 0; i--){
+            if(anc[u][i] != anc[v][i]) u = anc[u][i], v = anc[v][i];
+        }
+        return anc[u][0];
+    }
+    int dis(int u, int v){
+        return level[u] + level[v] - 2 * level[lca(u, v)];
+    }
+};
+
+class CD{
+    vector<vector<int>> adj;
+    vector<int> sub;
+    vector<bool> blocked;
+    int N;
+public:
+    CD(Tree<int> &tree): adj(tree.adj){
+        N = tree.adj.size() - 1;
+        blocked.assign(N + 1, 0);
+        sub.assign(N + 1, 0);
+        compute();
+    }
+    void compute(int u = 1, int p = 0){
+        sub[u] = 1;
+        for(auto v: adj[u]) if(v != p){
+            compute(v, u);
+            sub[u] += sub[v];
+        }
+    }
+    int centroid(int u, int p = 0){
+        int tot = sub[u]; 
+        for(auto v: adj[u]){
+            if(v == p || blocked[v]) continue;
+            if(2 * sub[v] > tot) {
+                sub[u] = tot - sub[v];
+                sub[v] = tot;
+                return centroid(v, u);
+            }
+        }
+        return u;
+    }
+    
+    int count(int u, int p){  // calculate ans
+
+    }
+    void update(int u, int p){   // update
+            
+    } 
+
+    int decompose(int u = 1){
+        u = centroid(u);
+        blocked[u] = 1;
+        int ans = 0;
+        
+        /////   Do something here    //// count() update()
+        for(auto v: adj[u]) if(!blocked[v]){
+            ans += count(v, u);
+            update(v, u);
+        }
+        /// reset updates here
+
+        for(auto v: adj[u]) if(!blocked[v]){
+            decompose(v);
+        }
+        return ans;
+    }
+};
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{lca}
+\addcontentsline{toc}{subsection}{lca}
+}
+\begin{minted}{cpp}
+struct LCA{
+    int T=0;
+    vi time,path,ret;
+    RMQ<int>rmq;
+    LCA(vector<vi>&C):time(sz(C)),rmq((dfs(C,0,-1), ret)){}
+    void dfs(vector<vi>& C, int v, int par){
+        time[v]=T++;
+        for(int y:C[v]) if (y!=par){
+            path.push_back(v),ret.push_back(time[v]);
+            dfs(C,y,v);
+        }
+    }
+
+    int lca(int a, int b){
+        if (a==b) return a;
+        tie(a,b)=minmax(time[a],time[b]);
+        return path[rmq.query(a,b)];
+    }
+
+    // dist(a,b){return depth[a]+depth[b]=2*depth[lca(a,b)];}
+ };
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{linkcut}
+\addcontentsline{toc}{subsection}{linkcut}
+}
+\begin{minted}{cpp}
+
+struct SplayTree {
+  struct Node {
+    int ch[2] = {0, 0}, p = 0;
+    long long self = 0, path = 0;        // Path aggregates
+    long long sub = 0, vir = 0;          // Subtree aggregates
+    bool flip = 0;                       // Lazy tags
+  };
+  vector<Node> T;
+ 
+  SplayTree(int n) : T(n + 1) {}
+  
+  void push(int x) {
+    if (!x || !T[x].flip) return;
+    int l = T[x].ch[0], r = T[x].ch[1];
+ 
+    T[l].flip ^= 1, T[r].flip ^= 1;
+    swap(T[x].ch[0], T[x].ch[1]);
+    T[x].flip = 0;
+  }
+  
+  void pull(int x) {
+    int l = T[x].ch[0], r = T[x].ch[1]; push(l); push(r); 
+ 
+    T[x].path = T[l].path + T[x].self + T[r].path;
+    T[x].sub = T[x].vir + T[l].sub + T[r].sub + T[x].self;
+  }
+  
+  void set(int x, int d, int y) {
+    T[x].ch[d] = y; T[y].p = x; pull(x); 
+  }
+ 
+  void splay(int x) { 
+    auto dir = [&](int x) {
+      int p = T[x].p; if (!p) return -1;
+      return T[p].ch[0] == x ? 0 : T[p].ch[1] == x ? 1 : -1;
+    };
+    auto rotate = [&](int x) {
+      int y = T[x].p, z = T[y].p, dx = dir(x), dy = dir(y);
+      set(y, dx, T[x].ch[!dx]); 
+      set(x, !dx, y);
+      if (~dy) set(z, dy, x); 
+      T[x].p = z;
+    };
+    for (push(x); ~dir(x); ) {
+      int y = T[x].p, z = T[y].p;
+      push(z); push(y); push(x);
+      int dx = dir(x), dy = dir(y);
+      if (~dy) rotate(dx != dy ? x : y);
+      rotate(x);
+    }
+  }
+};
+ 
+struct LinkCut : SplayTree {
+  LinkCut(int n) : SplayTree(n) {}
+ 
+  int access(int x) {
+    int u = x, v = 0;
+    for (; u; v = u, u = T[u].p) {
+      splay(u); 
+      int& ov = T[u].ch[1];
+      T[u].vir += T[ov].sub;
+      T[u].vir -= T[v].sub;
+      ov = v; pull(u);
+    }
+    return splay(x), v;
+  }
+ 
+  void reroot(int x) { 
+    access(x); T[x].flip ^= 1; push(x); 
+  }
+  
+  void Link(int u, int v) { 
+    reroot(u); access(v); 
+    T[v].vir += T[u].sub;
+    T[u].p = v; pull(v);
+  }
+  
+  void Cut(int u, int v) {
+    reroot(u); access(v);
+    T[v].ch[0] = T[u].p = 0; pull(v);
+  }
+  
+  // Rooted tree LCA. Returns 0 if u and v arent connected.
+  int LCA(int u, int v) { 
+    if (u == v) return u;
+    access(u); int ret = access(v); 
+    return T[u].p ? ret : 0;
+  }
+  
+  // Query subtree of u where v is outside the subtree.
+  long long Subtree(int u, int v) {
+    reroot(v); access(u); return T[u].vir + T[u].self;
+  }
+  
+  // Query path [u..v]
+  long long Path(int u, int v) {
+    reroot(u); access(v); return T[v].path;
+  }
+  
+  // Update vertex u with value v
+  void Update(int u, long long v) {
+    access(u); T[u].self = v; pull(u);
+  }
+};
+
+\end{minted}
+
+\needspace{5\baselineskip}
+{
+\titleformat{\section}{\Huge\bfseries\centering}{\thesection}{1em}{#1}[\vspace{2em}]
+\phantomsection
+\section*{Useful Snippets}
+\markboth{USEFUL SNIPPETS}{}
+\addcontentsline{toc}{section}{Useful Snippets}
+}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{array input}
+\addcontentsline{toc}{subsection}{array input}
+}
+\begin{minted}{cpp}
+
+int n;
+cin >> n;
+vector<int> a(n);
+for(int i=0; i<n; i++) cin >> a[i];
+
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{group string}
+\addcontentsline{toc}{subsection}{group string}
+}
+\begin{minted}{cpp}
+
+vector<pair<char, int>> segments;
+char prev = s[0];
+int cnt = 0;
+for(auto c : s) {
+    if(c != prev) {
+        segments.pb({prev, cnt});
+        cnt = 0;
+        prev = c;
+    }
+    cnt++;
+}
+segments.pb({prev, cnt});
+
+\end{minted}
+
+\needspace{2\baselineskip}
+{
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{\uline{#1}}
+\phantomsection
+\subsection*{macros}
+\addcontentsline{toc}{subsection}{macros}
+}
+\begin{minted}{cpp}
+#define rep(i,a,b) for(inti=a;i<(b);++i)
+#define all(x) begin(x),end(x)
+#define sz(x) (int)(x).size()
+typedef long long ll;
+typedef pair<int, int> pii;
+typedef vector<int> vi;
+\end{minted}
+
+\end{multicols*}
+
+\end{document}

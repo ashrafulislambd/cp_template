@@ -1,0 +1,13 @@
+{
+    "code_folder": "D:\\Programming\\my_template\\CodeFolder",
+    "template_path": "D:\\Programming\\my_template\\Template.tex",
+    "output_file_path": "D:\\Programming\\my_template\\Output.tex",
+    "excluded": [
+        ".vscode",
+        "__pycache__"
+    ],
+    "columns": 3,
+    "template_placeholder": "CODE HERE",
+    "sort_before": [],
+    "sort_after": []
+}
