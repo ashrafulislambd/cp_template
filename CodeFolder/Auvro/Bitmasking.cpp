@@ -28,3 +28,12 @@ x = 5328; //00000000000000000001010011010000
 cout<<__builtin_clz(x)<<"\n"; //19 (number of 0's at the beginning)
 cout<<__builtin_ctz(x)<<"\n"; //4 (number of 0's at the end)
 cout<<__builtin_popcount(x)<<"\n"; //5 (number of 1's)
+
+//some properties of bitwise operation
+a|b = a^b + a&b;
+(a&b) ^ (a|b) = a^b; 
+a+b = a|b + a&b;
+a+b = a^b + 2*(a&b);
+a-b = (a ^ (a&b)) - (a ^ (a|b));
+a-b = (a ^ (a&b)) - (b ^ (a&b));
+a-b = ((a|b) ^ b) - (a ^ (a|b));
