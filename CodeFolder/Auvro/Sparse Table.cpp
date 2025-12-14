@@ -1,8 +1,16 @@
 //Sparse table:
-class sparse_table{
+class SparseTable{
 private:
-    int n, m;
-    vector<vector<int>> a;
+    int n, lvl;
+    string op;
+    vector<vector<int>> v;
+
+public:
+    void allocate(){
+        v.resize(lvl);
+        for(auto &p : v)
+            p.resize(n);
+    }
 
     int logarithm(int a, int b){
         int r = 0, x = a;
@@ -10,42 +18,36 @@ private:
         return r;
     }
 
-    int operation(int a, int b){
-        //modify only here
-
-        return __gcd(a, b);
-        //return min(a, b);
-        //return max(a, b);
+    int operation(int x, int y){
+        if(op == "min") return min(x, y);
+        if(op == "max") return max(x, y);
+        if(op == "gcd") return __gcd(x, y);
+        if(op == "or") return (x|y);
+        return (x&y);
     }
 
-public:
-    sparse_table(int n){
-        this->n = n;
-        m = logarithm(2, n);
-        a.resize(1);
+    SparseTable(vector<int> &arr, const string &op) {
+        n = arr.size();
+        this->op = op;
+        lvl = logarithm(2, n) + 1;
+        allocate();
+        v[0] = arr;
+        build();
     }
-
-    void insert(int x){ a[0].push_back(x); }
 
     void build(){
-        a.resize(m+1, vector<int>(n, 0));
-
-        for(int i=1; i<=m; i++){
-            for(int j=0; j+(1<<i)-1 < n; j++){
-                int left = a[i-1][j];
-                int right = a[i-1][j + (1<<(i-1))];
-                a[i][j] = operation(left, right);
-            }
+        for(int p=1; p<lvl; p++){
+            int sz = 1LL<<p;
+            for(int i=0; i+sz-1 < n; i++)
+                v[p][i] = operation(v[p-1][i], v[p-1][i + sz/2]);
         }
     }
 
-    // driver code query is 1 indexed
-    int query(int i, int j){
-        i--; j--;
-
-        int x = logarithm(2, j-i+1);
-        int left = a[x][i];
-        int right = a[x][j - (1<<x) + 1];
-        return operation(left, right);
+    int query(int l, int r){
+        // change if not 1 based indexing
+        // l--; r--;
+        int p = logarithm(2, r-l+1);
+        int sz = 1LL<<p;
+        return operation(v[p][l], v[p][r-sz+1]);
     }
 };
