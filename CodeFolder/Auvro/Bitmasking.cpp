@@ -1,12 +1,3 @@
-//Bitmasking:
-int n, x;
-
-//bit representation
-for(int k=31; k>=0; k--){
-    if(n & (1<<k)) cout<<"1";
-    else cout<<"0";
-}
-
 //get kth bit (from 0th bit)    x = n & (1<<k);
 //set bit (to 1)                n = n | (1<<k);
 //reset bit (to 0)              n = n & ~(1<<k);
