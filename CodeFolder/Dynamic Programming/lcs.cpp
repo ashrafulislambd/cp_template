@@ -34,6 +34,5 @@ void solve(int tc){
     }
 
     reverse(res.begin(), res.end());
-
     cout<<res<<"\n";
 }

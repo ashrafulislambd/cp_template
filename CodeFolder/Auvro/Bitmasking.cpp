@@ -16,9 +16,9 @@ n = n | (n-1);
 
 //__builtin functions
 x = 5328; //00000000000000000001010011010000
-cout<<__builtin_clz(x)<<"\n"; //19 (number of 0's at the beginning)
-cout<<__builtin_ctz(x)<<"\n"; //4 (number of 0's at the end)
-cout<<__builtin_popcount(x)<<"\n"; //5 (number of 1's)
+cout<<__builtin_clzll(x)<<"\n"; //19 (number of 0's at the beginning)
+cout<<__builtin_ctzll(x)<<"\n"; //4 (number of 0's at the end)
+cout<<__builtin_popcountll(x)<<"\n"; //5 (number of 1's)
 
 //some properties of bitwise operation
 a|b = a^b + a&b;

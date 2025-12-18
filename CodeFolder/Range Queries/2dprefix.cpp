@@ -32,16 +32,6 @@ public:
         y2 = min(y2, m-1+x);
     }
 
-    // 1-indexed query
-    int query(int x1, int y1, int x2, int y2) {
-        boundCheck(x1, y1, x2, y2, 1);
-
-        return v[x2][y2]
-             - v[x1-1][y2]
-             - v[x2][y1-1]
-             + v[x1-1][y1-1];
-    }
-
     // 0-indexed query
     int query0(int x1, int y1, int x2, int y2) {
         boundCheck(x1, y1, x2, y2, 0);
