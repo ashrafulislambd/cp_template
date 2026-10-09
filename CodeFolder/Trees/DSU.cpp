@@ -1,40 +1,25 @@
-class DSU{
-private:    
-    int n, numComponents;
-    vector<int> parent, rank;
-
+class DSU{    
 public:
-    DSU(int n) : parent(n+1), rank(n+1, 0), n(n){
+    vector<int> parent, size, score;
+    int cnt;
+    DSU(int n) : parent(n + 1), size(n + 1, 1), score(n+1, 0) {
         iota(parent.begin(), parent.end(), 0);
-        numComponents = n;
+        cnt = n;
     }
-
+ 
     int root(int u){
-        if(parent[u] == u) 
-            return u;
-
+        if(parent[u] == u) return u;
         return parent[u] = root(parent[u]);
     }
-
     bool same(int u, int v){
         return root(u) == root(v);
     }
-
     void merge(int u, int v){
-        u = root(u);
-        v = root(v);
-
-        if(u == v) 
-            return;
-        if(rank[u] > rank[v]) 
-            swap(u, v);
-
-        parent[u] = v;
-        if(rank[u] == rank[v]) rank[v]++;
-        numComponents--;
-    }
-
-    int cntComponents(){
-        return numComponents;
+        u = root(u), v = root(v);
+        if(u == v) return;
+        if(size[u] < size[v]) swap(u, v);
+        parent[v] = u, size[u] += size[v];
+        score[v] += score[u];
+        cnt--;
     }
 };
